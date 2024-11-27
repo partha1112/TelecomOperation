@@ -28,7 +28,7 @@ public class Configuration {
         Number n = new Number(999999990+i, 111+i, p, true);
         numberMap.put(n.getNumber(), n);
 
-        Customer c = new Customer(i,"Customer"+i, "address : "+i, new CopyOnWriteArrayList( Arrays.asList(n)));
+        Customer c = new Customer(111+i,"Customer"+i, "address : "+i, new CopyOnWriteArrayList( Arrays.asList(n)));
         customerMap.put(c.getCustomerId(),c);
     }
 

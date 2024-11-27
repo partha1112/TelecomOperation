@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NumberNotFound.class)
-    public ResponseEntity<ErrorDto> numberNotFoundHaldler(NumberNotFound e){
+    @ExceptionHandler(InvalidNumber.class)
+    public ResponseEntity<ErrorDto> numberNotFoundHaldler(InvalidNumber e){
        return new ResponseEntity(new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), "Please check the Customer details you have entered"),
                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(CustomerNotFound.class)
-    public ResponseEntity<ErrorDto> customerNotFoundHaldler(CustomerNotFound e){
+    @ExceptionHandler(InvalidCustomer.class)
+    public ResponseEntity<ErrorDto> customerNotFoundHaldler(InvalidCustomer e){
         return new ResponseEntity(new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), "Please check the Number details you have entered"),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -1,7 +1,7 @@
 package com.demo.telecom.exceptions;
 
-public class CustomerNotFound extends Exception{
-    public CustomerNotFound(){
+public class InvalidCustomer extends Exception{
+    public InvalidCustomer(){
         super("Invalid Customer Provided");
     }
 }

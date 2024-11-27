@@ -2,16 +2,16 @@ package com.demo.telecom.service;
 
 import com.demo.telecom.dto.Customer;
 import com.demo.telecom.dto.Number;
-import com.demo.telecom.dto.Plan;
-import com.demo.telecom.exceptions.CustomerNotFound;
-import com.demo.telecom.exceptions.NumberNotFound;
+import com.demo.telecom.exceptions.InvalidCustomer;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static com.demo.telecom.config.Configuration.*;
+import static com.demo.telecom.config.Configuration.customerMap;
+import static com.demo.telecom.config.Configuration.numberMap;
+import static com.demo.telecom.util.Util.addNumberAndPlan;
+import static com.demo.telecom.util.Util.updateCustomerAndNumber;
 
 @Service
 public class CustomerService implements TelecomService{
@@ -26,12 +26,12 @@ public class CustomerService implements TelecomService{
     }
 
     @Override
-    public List<Customer> add(List list) throws CustomerNotFound {
+    public List<Customer> add(List list) throws InvalidCustomer {
         List<Customer> addedList = new ArrayList<>();
         for(Object ob : list){
             Customer customer = (Customer) ob;
             if(customerMap.keySet().contains(customer.getCustomerId())){
-                throw new CustomerNotFound();
+                throw new InvalidCustomer();
             }else{
                 customerMap.put(customer.getCustomerId(), customer);
                 customer.getNumberList().forEach(number -> {
@@ -46,9 +46,9 @@ public class CustomerService implements TelecomService{
     }
 
     @Override
-    public Customer getById(long id) throws CustomerNotFound {
+    public Customer getById(long id) throws InvalidCustomer {
         if(!customerMap.keySet().contains(id)){
-            throw new CustomerNotFound();
+            throw new InvalidCustomer();
         }
         return customerMap.get(id);
     }
@@ -56,58 +56,38 @@ public class CustomerService implements TelecomService{
 
 
     @Override
-    public void edit(Object ob) throws CustomerNotFound {
+    public void edit(Object ob) throws InvalidCustomer {
         Customer customer = (Customer) ob;
         if(customerMap.keySet().contains(((Customer) ob).getCustomerId())){
             customerMap.put(customer.getCustomerId(), customer);
         }else {
-            throw new CustomerNotFound();
+            throw new InvalidCustomer();
         }
 
 
     }
 
     @Override
-    public void deleteById(long id) throws CustomerNotFound {
+    public void deleteById(long id) throws InvalidCustomer {
        if(customerMap.keySet().contains(id)){
            customerMap.remove(id);
        }else{
-           throw new CustomerNotFound();
+           throw new InvalidCustomer();
        }
     }
 
-    public boolean updateNumber(Number number) throws CustomerNotFound {
-
-        boolean updated = false;
-        if(customerMap.keySet().contains(number.getCustomerId())){
-            if(numberMap.keySet().contains(number.getNumber())){
-                customerMap.get(number.getCustomerId()).getNumberList().forEach(n->{
-                    if(n.getNumber() == number.getNumber()){
-                        n.setCustomerId(number.getCustomerId());
-                        n.setPlan(number.getPlan());
-                        n.setActive(number.isActive());
-                    }
-                });
-            }else{
-                customerMap.get(number.getCustomerId()).getNumberList().add(number);
-            }
-
-            addNumberAndPlan(number);
-            updated=true;
-        }else {
-            throw new CustomerNotFound();
-        }
-        return updated;
+    public boolean updateNumber(Number number) throws InvalidCustomer {
+        return updateCustomerAndNumber(number);
     }
 
-    public List<Number> getAllNumbers(Long customerId) throws CustomerNotFound {
+    public List<Number> getAllNumbers(Long customerId) throws InvalidCustomer {
         if(!customerMap.keySet().contains(customerId)){
-            throw new CustomerNotFound();
+            throw new InvalidCustomer();
         }
         return customerMap.get(customerId).getNumberList();
     }
 
-    public void updateNumberStatus(String status,Long customerId,Long number) throws CustomerNotFound {
+    public void updateNumberStatus(String status,Long customerId,Long number) throws InvalidCustomer {
         if(customerMap.keySet().contains(customerId)){
             customerMap.get(customerId).getNumberList().forEach( n -> {
                 if(n.getNumber()==number){
@@ -117,16 +97,20 @@ public class CustomerService implements TelecomService{
                 }
             });
         }else {
-            throw new CustomerNotFound();
+            throw new InvalidCustomer();
         }
 
     }
-    private static void addNumberAndPlan(Number number) {
-        if(number != null && !numberMap.keySet().contains(number.getNumber())){
-            numberMap.put(number.getNumber(), number);
+
+    public void changeCustomerNumbers(Number number, Long oldCustomer) throws InvalidCustomer {
+        Long newCustomerId = number.getCustomerId();
+
+        if(!customerMap.keySet().contains(number.getCustomerId()) || !customerMap.keySet().contains(oldCustomer) ){
+            throw new InvalidCustomer();
         }
-        if( number.getPlan() != null && !planMap.keySet().contains(number.getPlan().getPlanId())){
-            planMap.put(number.getPlan().getPlanId(), number.getPlan());
-        }
+
+        customerMap.get(oldCustomer).getNumberList().removeIf( n -> n.getNumber() == number.getNumber());
+        customerMap.get(newCustomerId).getNumberList().add(number);
+
     }
 }

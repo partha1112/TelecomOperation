@@ -2,8 +2,7 @@ package com.demo.telecom.controller;
 
 import com.demo.telecom.dto.Customer;
 import com.demo.telecom.dto.Number;
-import com.demo.telecom.exceptions.CustomerNotFound;
-import com.demo.telecom.exceptions.NumberNotFound;
+import com.demo.telecom.exceptions.InvalidCustomer;
 import com.demo.telecom.service.CustomerService;
 import com.demo.telecom.service.TelecomFactoryImpl;
 import com.demo.telecom.service.TelecomService;
@@ -40,7 +39,7 @@ public class CustomerController {
     public Customer getCustomerById(@RequestParam(value = "id",required = true)long id ){
         try {
             return (Customer) service.getById(id);
-        } catch (CustomerNotFound e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -50,7 +49,7 @@ public class CustomerController {
         List<Customer> respList= null;
         try {
             respList = service.add(customerList);
-        } catch (CustomerNotFound e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity(respList,HttpStatus.CREATED);
@@ -60,7 +59,7 @@ public class CustomerController {
     public ResponseEntity updateCustomer(@RequestBody Customer customer){
         try {
             service.edit(customer);
-        } catch (CustomerNotFound e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity("Updated Successfully",HttpStatus.OK);
@@ -70,7 +69,7 @@ public class CustomerController {
     public ResponseEntity changeNumber(@RequestBody Number number){
         try {
             ((CustomerService) service).updateNumber(number);
-        } catch (CustomerNotFound e) {
+        } catch (InvalidCustomer e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity("Updated Successfully",HttpStatus.OK);
@@ -90,7 +89,7 @@ public class CustomerController {
     public List<Number> getNumbersByCusomer(@RequestParam(name = "customer_id",required = true)Long customerId){
         try {
             return ((CustomerService) service).getAllNumbers(customerId);
-        } catch (CustomerNotFound e) {
+        } catch (InvalidCustomer e) {
             throw new RuntimeException(e);
         }
     }
@@ -101,7 +100,18 @@ public class CustomerController {
                                              @RequestParam(value = "number",required = true)Long number){
         try {
             ((CustomerService) service).updateNumberStatus(status,customerId,number);
-        } catch (CustomerNotFound e) {
+        } catch (InvalidCustomer e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity("Updated Successfully",HttpStatus.OK);
+    }
+
+    @PostMapping("/changeNumber")
+    public ResponseEntity changeNumber(@RequestBody Number number,
+            @RequestParam(value = "old_customer_id",required = true)Long oldCustomerId){
+        try {
+            ((CustomerService) service).changeCustomerNumbers(number,oldCustomerId);
+        } catch (InvalidCustomer e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity("Updated Successfully",HttpStatus.OK);

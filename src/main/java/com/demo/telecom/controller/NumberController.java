@@ -2,7 +2,6 @@ package com.demo.telecom.controller;
 
 
 import com.demo.telecom.dto.Number;
-import com.demo.telecom.exceptions.CustomerNotFound;
 import com.demo.telecom.service.TelecomFactoryImpl;
 import com.demo.telecom.service.TelecomService;
 import com.demo.telecom.util.Type;
@@ -38,7 +37,7 @@ public class NumberController{
     public Number getNumberById(@RequestParam(value = "id",required = true)long id ){
         try {
             return (Number) service.getById(id);
-        } catch (CustomerNotFound e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -48,7 +47,7 @@ public class NumberController{
         List<Number> respList= null;
         try {
             respList = service.add(numberList);
-        } catch (CustomerNotFound e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity(respList,HttpStatus.CREATED);
@@ -58,7 +57,7 @@ public class NumberController{
     public ResponseEntity updateNumber(@RequestBody Number number){
         try {
             service.edit(number);
-        } catch (CustomerNotFound e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity("Updated Successfully",HttpStatus.OK);
@@ -68,7 +67,7 @@ public class NumberController{
     public ResponseEntity deleteNumber(@RequestParam(value = "id",required = true)long id){
         try {
             service.deleteById(id);
-        } catch (CustomerNotFound e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity("Deleted Successfully",HttpStatus.OK);

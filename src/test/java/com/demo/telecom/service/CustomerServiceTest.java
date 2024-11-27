@@ -3,13 +3,12 @@ package com.demo.telecom.service;
 import com.demo.telecom.dto.Customer;
 import com.demo.telecom.dto.Number;
 import com.demo.telecom.dto.Plan;
-import com.demo.telecom.exceptions.CustomerNotFound;
-import com.demo.telecom.exceptions.NumberNotFound;
+import com.demo.telecom.exceptions.InvalidCustomer;
+import com.demo.telecom.exceptions.InvalidNumber;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -29,7 +28,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    void getByIdSuccessCase() throws CustomerNotFound {
+    void getByIdSuccessCase() throws InvalidCustomer {
         Customer response = customerService.getById(1);
         assertEquals(response.getName(),"Customer1");
 
@@ -37,7 +36,7 @@ class CustomerServiceTest {
 
     @Test
     void getByIdExceptionCase() {
-        Exception exception = assertThrows(CustomerNotFound.class, () -> {
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
             customerService.getById(000);
         });
         assertEquals("Invalid Customer Provided", exception.getMessage());
@@ -50,7 +49,7 @@ class CustomerServiceTest {
         Number n = new Number(1111111111, 2222, p, true);
         Customer c = new Customer(3,"Customer99", "address : 99", new CopyOnWriteArrayList<>(Arrays.asList(n)));
 
-        Exception exception = assertThrows(CustomerNotFound.class, () -> {
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
             customerService.add(Arrays.asList(c));
         });
         assertEquals("Invalid Customer Provided", exception.getMessage());
@@ -58,7 +57,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    void addCustomersSuccessCase() throws CustomerNotFound {
+    void addCustomersSuccessCase() throws InvalidCustomer {
         Plan p = new Plan(333,333, 333, 333, 300);
         Number n = new Number(1111111111, 2222, p, true);
         Customer c = new Customer(99,"Customer99", "address : 99", new CopyOnWriteArrayList<>(Arrays.asList(n)));
@@ -69,7 +68,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    void editSuccessCase() throws CustomerNotFound {
+    void editSuccessCase() throws InvalidCustomer {
         Plan p = new Plan(111,10, 10, 10, 100);
         Number n = new Number(999999991, 112, p, true);
         Customer c = new Customer(1,"CustomerEditted", "address : 1", new CopyOnWriteArrayList<>(Arrays.asList(n)));
@@ -79,24 +78,24 @@ class CustomerServiceTest {
     }
 
     @Test
-    void editExceptionCase() throws CustomerNotFound {
+    void editExceptionCase() throws InvalidCustomer {
 
         Customer c = new Customer(99988,"CustomerEditted", "address : 1", new CopyOnWriteArrayList<>());
-        Exception exception = assertThrows(CustomerNotFound.class, () -> {
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
             customerService.edit(c);
         });
         assertEquals("Invalid Customer Provided", exception.getMessage());
     }
 
     @Test
-    void deleteByIdScuuessCase() throws CustomerNotFound {
+    void deleteByIdScuuessCase() throws InvalidCustomer {
 
         Plan p = new Plan(333,333, 333, 333, 300);
         Number n = new Number(1111111111, 2222, p, true);
         Customer c = new Customer(99,"Customer99", "address : 99", new CopyOnWriteArrayList<>( Arrays.asList(n)));
         try {
            customerService.add(Arrays.asList(c));
-        } catch (CustomerNotFound e) {
+        } catch (InvalidCustomer e) {
             System.out.println("Customer Already Available");
         }
         assertNotNull( customerService.getById(99));
@@ -107,14 +106,14 @@ class CustomerServiceTest {
 
     @Test
     void deleteByIdExceptionCase(){
-        Exception exception = assertThrows(CustomerNotFound.class, () -> {
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
             customerService.deleteById(9889);
         });
         assertEquals("Invalid Customer Provided", exception.getMessage());
     }
 
     @Test
-    void updateNumberSuccessCase() throws NumberNotFound, CustomerNotFound {
+    void updateNumberSuccessCase() throws InvalidNumber, InvalidCustomer {
         Number n = new Number(1111111111, 2, null, true);
         boolean resp = customerService.updateNumber(n);
         assertTrue(resp);
@@ -126,25 +125,53 @@ class CustomerServiceTest {
     void updateExceptionCase(){
 
         Number n = new Number(1111111111, 2222, null, true);
-        Exception exception = assertThrows(CustomerNotFound.class, () -> {
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
             customerService.updateNumber(n);
         });
         assertEquals("Invalid Customer Provided", exception.getMessage());
     }
 
     @Test
-    void getAllNumbersSuccessCase() throws CustomerNotFound {
+    void getAllNumbersSuccessCase() throws InvalidCustomer {
         List<Number> allNumbers = customerService.getAllNumbers(2L);
         assertTrue(allNumbers.size()>1);
     }
 
     @Test
-    void getAllNumbersExceptionCase() throws CustomerNotFound {
-        Exception exception = assertThrows(CustomerNotFound.class, () -> {
+    void getAllNumbersExceptionCase() throws InvalidCustomer {
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
             customerService.getAllNumbers(2000L);
         });
         assertEquals("Invalid Customer Provided", exception.getMessage());
     }
 
+    @Test
+    void changeCustomerNumbersSuccessCase() throws InvalidCustomer {
+        Plan p = new Plan(111,10, 10, 10, 100);
+        Number n = new Number(999999991, 115, p, true);
+        customerService.changeCustomerNumbers(n,112L);
+        Customer resp =customerService.getById(115);
+        assertTrue(resp.getNumberList().size()>2);
+    }
+
+    @Test
+    void changeCustomerNumbersExceptionCase() throws InvalidCustomer {
+        Plan p = new Plan(111,10, 10, 10, 100);
+        Number n = new Number(999999991, 999, p, true);
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
+            customerService.changeCustomerNumbers(n,112L);
+        });
+        assertEquals("Invalid Customer Provided", exception.getMessage());
+    }
+
+    @Test
+    void changeCustomerNumbersExceptionCase2() throws InvalidCustomer {
+        Plan p = new Plan(111,10, 10, 10, 100);
+        Number n = new Number(999999991, 115, p, true);
+        Exception exception = assertThrows(InvalidCustomer.class, () -> {
+            customerService.changeCustomerNumbers(n,999L);
+        });
+        assertEquals("Invalid Customer Provided", exception.getMessage());
+    }
 
 }

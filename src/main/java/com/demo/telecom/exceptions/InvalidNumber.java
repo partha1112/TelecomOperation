@@ -1,8 +1,8 @@
 package com.demo.telecom.exceptions;
 
-public class NumberNotFound extends Exception{
+public class InvalidNumber extends Exception{
 
-    public NumberNotFound(){
+    public InvalidNumber(){
         super("Invalid Number Provided");
     }
 }
