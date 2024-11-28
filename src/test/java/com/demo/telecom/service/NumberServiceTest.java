@@ -46,7 +46,7 @@ public class NumberServiceTest {
     }
 
     @Test
-    void addCustomersFailureCase(){
+    void addNumbersse(){
 
         Plan p = new Plan(333,333, 333, 333, 300);
         Number n = new Number(1111111111, 2222, p, true);
@@ -59,7 +59,7 @@ public class NumberServiceTest {
     }
 
     @Test
-    void addCustomersSuccessCase() throws InvalidNumber, InvalidCustomer {
+    void addNumbersSuccessCase() throws InvalidNumber, InvalidCustomer {
         Plan p = new Plan(333,333, 333, 333, 300);
         Number n = new Number(77777777, 113, p, true);
 

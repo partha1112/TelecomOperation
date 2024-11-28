@@ -43,7 +43,7 @@ public class NumberController{
     }
 
     @PostMapping("/add")
-    public ResponseEntity addCustomer(@RequestBody List<Number> numberList){
+    public ResponseEntity addNumbers(@RequestBody List<Number> numberList){
         List<Number> respList= null;
         try {
             respList = service.add(numberList);
