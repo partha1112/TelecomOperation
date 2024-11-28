@@ -65,11 +65,18 @@ public class NumberService implements TelecomService {
     }
 
     @Override
-    public void deleteById(long id) throws InvalidNumber {
+    public void deleteById(long id) throws InvalidNumber, InvalidCustomer {
+
         if (numberMap.keySet().contains(id)) {
+            if(customerMap.keySet().contains(numberMap.get(id).getCustomerId())){
+                customerMap.get(numberMap.get(id).getCustomerId()).getNumberList().removeIf(n->n.getNumber()==id);
+            }else {
+                throw new InvalidCustomer();
+            }
             numberMap.remove(id);
         } else {
             throw new InvalidNumber();
         }
+
     }
 }

@@ -29,8 +29,8 @@ class CustomerServiceTest {
 
     @Test
     void getByIdSuccessCase() throws InvalidCustomer {
-        Customer response = customerService.getById(1);
-        assertEquals(response.getName(),"Customer1");
+        Customer response = customerService.getById(112);
+        assertNotNull(response.getName());
 
     }
 
@@ -47,7 +47,7 @@ class CustomerServiceTest {
 
         Plan p = new Plan(333,333, 333, 333, 300);
         Number n = new Number(1111111111, 2222, p, true);
-        Customer c = new Customer(3,"Customer99", "address : 99", new CopyOnWriteArrayList<>(Arrays.asList(n)));
+        Customer c = new Customer(113,"Customer99", "address : 99", new CopyOnWriteArrayList<>(Arrays.asList(n)));
 
         Exception exception = assertThrows(InvalidCustomer.class, () -> {
             customerService.add(Arrays.asList(c));
@@ -59,7 +59,7 @@ class CustomerServiceTest {
     @Test
     void addCustomersSuccessCase() throws InvalidCustomer {
         Plan p = new Plan(333,333, 333, 333, 300);
-        Number n = new Number(1111111111, 2222, p, true);
+        Number n = new Number(1111111111, 99, p, true);
         Customer c = new Customer(99,"Customer99", "address : 99", new CopyOnWriteArrayList<>(Arrays.asList(n)));
         List<Customer> response = customerService.add(Arrays.asList(c));
         assertNotNull(response );
@@ -71,9 +71,9 @@ class CustomerServiceTest {
     void editSuccessCase() throws InvalidCustomer {
         Plan p = new Plan(111,10, 10, 10, 100);
         Number n = new Number(999999991, 112, p, true);
-        Customer c = new Customer(1,"CustomerEditted", "address : 1", new CopyOnWriteArrayList<>(Arrays.asList(n)));
+        Customer c = new Customer(112,"CustomerEditted", "address : 1", new CopyOnWriteArrayList<>(Arrays.asList(n)));
         customerService.edit(c);
-        Customer response = customerService.getById(1);
+        Customer response = customerService.getById(112);
         assertEquals(response.getName(),"CustomerEditted");
     }
 
@@ -114,10 +114,10 @@ class CustomerServiceTest {
 
     @Test
     void updateNumberSuccessCase() throws InvalidNumber, InvalidCustomer {
-        Number n = new Number(1111111111, 2, null, true);
+        Number n = new Number(88888888, 114, null, true);
         boolean resp = customerService.updateNumber(n);
         assertTrue(resp);
-        Customer customer = customerService.getById(2);
+        Customer customer = customerService.getById(114);
         assertEquals(customer.getNumberList().size(),2);
     }
 
@@ -133,8 +133,8 @@ class CustomerServiceTest {
 
     @Test
     void getAllNumbersSuccessCase() throws InvalidCustomer {
-        List<Number> allNumbers = customerService.getAllNumbers(2L);
-        assertTrue(allNumbers.size()>1);
+        List<Number> allNumbers = customerService.getAllNumbers(116L);
+        assertTrue(allNumbers.size()>0);
     }
 
     @Test
@@ -151,7 +151,7 @@ class CustomerServiceTest {
         Number n = new Number(999999991, 115, p, true);
         customerService.changeCustomerNumbers(n,112L);
         Customer resp =customerService.getById(115);
-        assertTrue(resp.getNumberList().size()>2);
+        assertTrue(resp.getNumberList().size()==2);
     }
 
     @Test

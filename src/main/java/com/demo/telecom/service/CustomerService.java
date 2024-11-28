@@ -60,6 +60,7 @@ public class CustomerService implements TelecomService{
         Customer customer = (Customer) ob;
         if(customerMap.keySet().contains(((Customer) ob).getCustomerId())){
             customerMap.put(customer.getCustomerId(), customer);
+            customer.getNumberList().forEach(n->{addNumberAndPlan(n);});
         }else {
             throw new InvalidCustomer();
         }

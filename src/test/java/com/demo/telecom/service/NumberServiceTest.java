@@ -61,7 +61,7 @@ public class NumberServiceTest {
     @Test
     void addCustomersSuccessCase() throws InvalidNumber, InvalidCustomer {
         Plan p = new Plan(333,333, 333, 333, 300);
-        Number n = new Number(1111111111, 112, p, true);
+        Number n = new Number(77777777, 113, p, true);
 
         List<Number> beforeAdd = numberService.getAll();
         assertEquals( beforeAdd.size(), 5);
@@ -72,7 +72,7 @@ public class NumberServiceTest {
         List<Number> afterAdd = numberService.getAll();
         assertEquals( afterAdd.size(), 6);
 
-        Customer customer= customerService.getById(112);
+        Customer customer= customerService.getById(113);
         assertEquals(customer.getNumberList().size(),2);
     }
 
@@ -96,7 +96,7 @@ public class NumberServiceTest {
     }
 
     @Test
-    void deleteByIdScuuessCase() throws InvalidNumber {
+    void deleteByIdScuuessCase() throws InvalidNumber, InvalidCustomer {
 
         Plan p = new Plan(333,333, 333, 333, 300);
         Number n = new Number(1111111111, 112, p, true);
@@ -105,11 +105,16 @@ public class NumberServiceTest {
         } catch (Exception e) {
             System.out.println("Number Already Available");
         }
-        System.out.println(numberService.getAll().size());
+
+        Customer customerBefore=customerService.getById(112L);
+        assertTrue(customerBefore.getNumberList().size()==2);
+
         assertNotNull( numberService.getById(1111111111));
         numberService.deleteById(1111111111);
         assertEquals(numberService.getAll().size(),5);
 
+        Customer customerAfter=customerService.getById(112L);
+        assertTrue(customerBefore.getNumberList().size()==1);
     }
 
     @Test

@@ -65,7 +65,7 @@ public class CustomerController {
         return new ResponseEntity("Updated Successfully",HttpStatus.OK);
     }
 
-    @PatchMapping("/changeNumber")
+    @PatchMapping("/editNumber")
     public ResponseEntity changeNumber(@RequestBody Number number){
         try {
             ((CustomerService) service).updateNumber(number);
